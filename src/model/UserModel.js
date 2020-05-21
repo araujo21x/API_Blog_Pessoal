@@ -3,15 +3,15 @@ class UserModel {
     constructor(user) {
         this._user = {
             _id: typeof user._id == "undefined" ? undefined : user._id,
-            _name: typeof user.name == "undefined" ? undefined : user.name,
-            _lastName: typeof user.lastName == "undefined" ? undefined : user.lastName,
-            _email: typeof user.email == "undefined" ? undefined : user.email,
-            _nickName: typeof user.nickName == "undefined" ? undefined : user.nickName,
-            _password: typeof user.password == "undefined" ? undefined : user.password,
-            _birthDay: typeof user.birthDay == "undefined" ? undefined : user.birthDay,
-            _creat: typeof user.creat == "undefined" ? undefined : user.creat,
-            _photoProfile: typeof user.photoProfile == "undefined" ? undefined : user.photoProfile,
-            _socialNetwork: typeof user.socialNetwork == "undefined" ? undefined : user.socialNetwork
+            name: typeof user.name == "undefined" ? undefined : user.name,
+            lastName: typeof user.lastName == "undefined" ? undefined : user.lastName,
+            email: typeof user.email == "undefined" ? undefined : user.email,
+            nickName: typeof user.nickName == "undefined" ? undefined : user.nickName,
+            password: typeof user.password == "undefined" ? undefined : user.password,
+            birthDay: typeof user.birthDay == "undefined" ? undefined : user.birthDay,
+            creat: typeof user.creat == "undefined" ? undefined : user.creat,
+            photoProfile: typeof user.photoProfile == "undefined" ? undefined : user.photoProfile,
+            socialNetwork: typeof user.socialNetwork == "undefined" ? undefined : user.socialNetwork
         }
     }
 
@@ -24,7 +24,7 @@ class UserModel {
             this.verificationAll(response => {
                 if (response.length > 19)
                     reject(response);
-                    
+
                 resolver(this.get());
             });
         });
@@ -53,20 +53,16 @@ class UserModel {
 
     verificationCamp() {
         return new Promise(resolver => {
-            let i = 0;
             let message = ``;
 
-            do {
-                if (!this._user._name) message = `${message} *Nome não informado`;
-                if (!this._user._lastName) message = `${message} *Sobrenome não informado`;
-                if (!this._user._email) message = `${message} *Email não informado`;
-                if (!this._user._nickName) message = `${message} *NickName não informado`;
-                if (!this._user._password) message = `${message} *Senha não informada`;
-                if (!this._user._birthDay) message = `${message} *Data de nascimento não informada`;
-                i++;
-            } while (i == 0);
+            if (!this._user.name) message = `${message} *Nome não informado`;
+            if (!this._user.lastName) message = `${message} *Sobrenome não informado`;
+            if (!this._user.email) message = `${message} *Email não informado`;
+            if (!this._user.nickName) message = `${message} *NickName não informado`;
+            if (!this._user.password) message = `${message} *Senha não informada`;
+            if (!this._user.birthDay) message = `${message} *Data de nascimento não informada`;
 
-            if (i > 0) resolver(message)
+            resolver(message)
         })
 
     }
@@ -75,9 +71,9 @@ class UserModel {
         return new Promise(resolve => {
             let menssagePassword = ``;
 
-            if (this._user._password) {
-                if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(this._user._password))
-                    menssagePassword = ` *Senha Invalida`;
+            if (this._user.password) {
+                if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/.test(this._user.password))
+                    menssagePassword = ` *Senha invalida: Senha precisa ter mais de 6 caractere, um caractere especial, um numero e uma letra`;
             }
 
             resolve(menssagePassword);
@@ -89,8 +85,8 @@ class UserModel {
         return new Promise(resolve => {
             let menssageEmail = ``;
 
-            if (this._user._email) {
-                if (!/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(this._user._email))
+            if (this._user.email) {
+                if (!/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(this._user.email))
                     menssageEmail = ` *Email Invalido`;
             }
 

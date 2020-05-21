@@ -13,15 +13,14 @@ class UserController{
 
     register(){
         return async (req, res)=> {
-            const userModel = new UserModel({name:"lucas", lastName:"de Araujo", email: "araujolucas97@gmail.com", password: "A021997", nickName:"Araujo21x", birthDay: Date.now()});
+            const userModel = new UserModel(req.body);
             const userDao = new UserDao();
 
             try{
                 const newUser = await userModel.validationRegister();
-
                 const user = await userDao.register(newUser);
 
-                res.status(200).json({message: "Cadastrado com sucesso!", user: user.ops[0]});
+                res.status(200).json({message: "Cadastrado com sucesso!", user/*: user.ops[0]*/});
 
             }catch(err){
                 res.status(400).json(err);
