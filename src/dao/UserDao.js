@@ -4,8 +4,16 @@ class UserDao {
 
     register(user) {
         return new Promise((resolve, reject) => {
-            
             const db = mongo.db('myBlog').collection('user');
+
+            this.verificEmail_Nick(db, user)
+                .then(() => db.insertOne(user).then(user => resolve(user)).catch(err => reject(err))).catch(err => reject(err));
+        })
+    }
+
+    verificEmail_Nick(db, user) {
+        return new Promise((resolve, reject) => {
+
             let message = ``;
 
             db.find({ $or: [{ nickName: user.nickName }, { email: user.email }] }).toArray()
@@ -18,17 +26,21 @@ class UserDao {
                         });
 
                         reject(message);
-
                     } else {
-                        user.creat = Date.now();
-
-                        db.insertOne(user)
-                            .then((user) => { resolve(user) })
-                            .catch(err => reject(err));
+                        resolve();
                     }
                 })
                 .catch(err => reject(err));
         })
+
+    }
+
+    verificEmail() {
+
+    }
+
+    verificNick() {
+
     }
 }
 
