@@ -1,13 +1,59 @@
 const mongo = require('../config/mongoDb');
+const bcrypt = require('bcryptjs');
 
 class UserDao {
 
     register(user) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             const db = mongo.db('myBlog').collection('user');
 
             this.verificEmail_Nick(db, user)
-                .then(() => db.insertOne(user).then(user => resolve(user)).catch(err => reject(err))).catch(err => reject(err));
+                .then(() => {
+                    bcrypt.hash(user.password, 10).then(hash => {
+                        user.password = hash;
+
+                        db.insertOne(user)
+                            .then(user => {
+                                resolve(user.ops[0])
+
+                            }).catch(err => reject(err));
+
+                    }).catch(err => reject(err));
+                })
+        })
+    }
+
+    login(user) {
+        return new Promise((resolve, reject) => {
+            const db = mongo.db('myBlog').collection('user');
+            if (user.email) {
+                db.findOne({ email: user.email }).then(response => {
+                    if (!response)
+                        reject(`Usuário não encontrando, reveja seus dados`)
+
+                    bcrypt.compare(user.password, response.password)
+                        .then(value => {
+                            if (!value) reject(`senha incorreta`);
+                            resolve(response);
+                        })
+                        .catch(() => reject(`senha incorreta`));
+
+                }).catch(err => rejetct(err));
+
+            } else {
+                db.findOne({ nickName: user.nickName }).then(response => {
+                    if (!response)
+                        reject(`Usuário não encontrando, reveja seus dados`);
+
+                    bcrypt.compare(user.password, response.password)
+                        .then(value => {
+                            if (!value) reject(`senha incorreta`);
+                            resolve(response);
+
+                        }).catch(() => reject(`senha incorreta`));
+
+                }).catch(err => rejetct(err));
+            }
         })
     }
 

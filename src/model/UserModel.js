@@ -2,16 +2,16 @@
 class UserModel {
     constructor(user) {
         this._user = {
-            _id: typeof user._id == "undefined" ? undefined : user._id,
-            name: typeof user.name == "undefined" ? undefined : user.name,
-            lastName: typeof user.lastName == "undefined" ? undefined : user.lastName,
-            email: typeof user.email == "undefined" ? undefined : user.email,
-            nickName: typeof user.nickName == "undefined" ? undefined : user.nickName,
-            password: typeof user.password == "undefined" ? undefined : user.password,
-            birthDay: typeof user.birthDay == "undefined" ? undefined : user.birthDay,
-            creat: typeof user.creat == "undefined" ? undefined : user.creat,
-            photoProfile: typeof user.photoProfile == "undefined" ? undefined : user.photoProfile,
-            socialNetwork: typeof user.socialNetwork == "undefined" ? undefined : user.socialNetwork
+            _id: typeof user._id == "undefined" ? null : user._id,
+            name: typeof user.name == "undefined" ? null : user.name,
+            lastName: typeof user.lastName == "undefined" ? null : user.lastName,
+            email: typeof user.email == "undefined" ? null : user.email,
+            nickName: typeof user.nickName == "undefined" ? null : user.nickName,
+            password: typeof user.password == "undefined" ? null : user.password,
+            birthDay: typeof user.birthDay == "undefined" ? null : user.birthDay,
+            creat: typeof user.creat == "undefined" ? null : user.creat,
+            photoProfile: typeof user.photoProfile == "undefined" ? null : user.photoProfile,
+            socialNetwork: typeof user.socialNetwork == "undefined" ? null : user.socialNetwork
         }
     }
 
@@ -28,6 +28,38 @@ class UserModel {
                 resolver(this.get());
             });
         });
+    }
+
+    validationLogin() {
+        return new Promise((resolve, reject) => {
+            let mensagem = ``;
+            if (this._user.email) {
+                this.verificationEmail()
+                    .then(menssageEmail => {
+                        mensagem = `${mensagem}${menssageEmail}`
+
+                        this.verificationPassword()
+                            .then(menssagePassword => {
+                                mensagem = `${mensagem}${menssagePassword}`
+
+                                mensagem > 0 ? reject(mensagem) : resolve(this.get());
+                            })
+                    });
+
+            } else {
+                if (!this._user.nickName) reject(`email ou login não informado`);
+
+                this.verificationPassword()
+                    .then(menssagePassword => {
+                        mensagem = `${mensagem}${menssagePassword}`
+
+                        mensagem > 0 ? reject(mensagem) : resolve(this.get());
+                    });
+            }
+
+
+
+        })
     }
 
     verificationAll(callback) {

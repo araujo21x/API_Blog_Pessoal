@@ -5,4 +5,5 @@ module.exports = (app) =>{
     const routes = user.routes();
 
     app.post(routes.register, user.register());
+    app.post(routes.login, user.login());
 }
