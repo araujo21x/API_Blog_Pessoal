@@ -1,6 +1,8 @@
 const mongo = require('../config/mongoDb');
 const ObjectId = require('mongodb').ObjectId;
 const bcrypt = require('bcryptjs');
+const aws = require(`aws-sdk`);
+require('dotenv/config');
 
 class UserDao {
 
@@ -58,20 +60,6 @@ class UserDao {
         })
     }
 
-    setProfilePic(user) {
-        return new Promise((resolve, reject) => {
-            const db = mongo.db('myBlog').collection('user');
-
-            db.findOneAndUpdate({ _id: new ObjectId(user._id) },
-                { $set: { profilePic: user.profilePic } })
-                .then(() => {
-                    this.getUser(user._id)
-                        .then(user => resolve(user))
-                        .catch(err => reject(err));
-                })
-                .catch(err => reject(err))
-        })
-    }
     getUser(id) {
         return new Promise((resolve, reject) => {
             const db = mongo.db('myBlog').collection('user');
@@ -81,6 +69,7 @@ class UserDao {
         })
 
     }
+
     verificEmail_Nick(db, user) {
         return new Promise((resolve, reject) => {
 
@@ -111,6 +100,43 @@ class UserDao {
     verificNick() {
 
     }
+
+    setProfilePic(user) {
+        return new Promise((resolve, reject) => {
+            const db = mongo.db('myBlog').collection('user');
+
+            db.findOneAndUpdate({ _id: new ObjectId(user._id) },
+                { $set: { profilePic: user.profilePic } })
+                .then(() => {
+                    this.getUser(user._id)
+                        .then(user => resolve(user))
+                        .catch(err => reject(err));
+                })
+                .catch(err => reject(err))
+        })
+    }
+
+    deleteProfilePic(id, key) {
+        return new Promise((resolver, reject) => {
+            const db = mongo.db('myBlog').collection('user');
+            if (process.env.STORAGE_TYPE === 's3') {
+                const s3 = new aws.S3();
+
+                s3.deleteObject({
+                    Bucket: process.env.AWS_BUCKET_NAME,
+                    Key: key
+                }).promise()
+                    .then(() => {
+                        db.findOneAndUpdate({ _id: new ObjectId(id) },
+                            { $set: { profilePic: null } })
+                            .then(user => {
+                                resolver(user.value);
+                            }).catch(err => reject(err));
+                    }).catch(err => reject({ err }));
+            }
+        });
+    }
+
 }
 
 module.exports = UserDao;

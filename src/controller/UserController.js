@@ -10,7 +10,7 @@ class UserController {
             recoveryNName: `/recovery/nickName`,
             recoveryPass: `/recovery/password`,
             profilePic: `/user/profilePic`,
-            edit: `/user/edit`,
+            user: `/user/user`,
 
         }
     }
@@ -53,6 +53,24 @@ class UserController {
         }
     }
 
+    get() {
+        return async (req, res) => {
+
+        }
+    }
+
+    edit() {
+        return async (req, res) => {
+
+        }
+    }
+
+    delete() {
+        return (req, res) => {
+
+        }
+    }
+
     setProfilePic() {
         return async (req, res) => {
             let editUser = { _id: req.userId, profilePic: req.file };
@@ -68,5 +86,24 @@ class UserController {
             };
         }
     }
+
+    deleteProfilePic() {
+        return async (req, res) => {
+            const userDao = new UserDao();
+            
+            try{
+                const newUser = userDao.deleteProfilePic(req.userId, req.body.key);
+                res.status(200).json(newUser);
+
+            }catch(err) {res.status(400).json(err)};
+        }
+    }
+
+    tradeProfilePic() {
+
+    }
+
+
+
 }
 module.exports = UserController;
