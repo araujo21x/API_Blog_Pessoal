@@ -1,10 +1,9 @@
 const authMiddleware = require('../middlewares/auth');
+const userRoute = require('./userRoute');
 
 module.exports = app =>{
     
     app.use(authMiddleware);
     
-    app.get("/", (req,res)=> {
-        res.send('oi ' + req.userId);
-    })
+    userRoute(app);
 }

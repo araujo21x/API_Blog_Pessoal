@@ -1,17 +1,22 @@
-
 class UserModel {
     constructor(user) {
         this._user = {
-            _id: typeof user._id == "undefined" ? null : user._id,
-            name: typeof user.name == "undefined" ? null : user.name,
-            lastName: typeof user.lastName == "undefined" ? null : user.lastName,
-            email: typeof user.email == "undefined" ? null : user.email,
-            nickName: typeof user.nickName == "undefined" ? null : user.nickName,
-            password: typeof user.password == "undefined" ? null : user.password,
-            birthDay: typeof user.birthDay == "undefined" ? null : user.birthDay,
-            creat: typeof user.creat == "undefined" ? null : user.creat,
-            photoProfile: typeof user.photoProfile == "undefined" ? null : user.photoProfile,
-            socialNetwork: typeof user.socialNetwork == "undefined" ? null : user.socialNetwork
+            _id: user._id,
+            name: user.name,
+            lastName: user.lastName,
+            email: user.email,
+            nickName: user.nickName,
+            password: user.password,
+            birthDay: user.birthDay,
+            creat: user.creat,
+            update: user.update,
+            profilePic: !user.profilePic ? null : {
+                name: user.profilePic.originalname,
+                size: user.profilePic.size,
+                key: user.profilePic.key,
+                url: !user.profilePic.location ? "" : user.profilePic.location,
+            },
+            socialNetwork: user.socialNetwork
         }
     }
 
