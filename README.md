@@ -72,14 +72,3 @@ API para um projeto de Blog/portfólio pessoal, que funcione para demonstrar meu
  * morgan: 1.10.0;
  * multer: 1.4.2;
  * multer-s3: 2.9.0.
-
-
- modemon 2.0.4;
- * body-parser 1.19.0;
- * mongodb 3.5.7;
- * dotenv 8.2.0;
- * aws-sdk 2.684.0;
- * bcryptjs 2.4.3;
- * jsonwebtoken: 8.5.1;
- * morgan: 1.10.0;
- * multer: 1.4.2;
