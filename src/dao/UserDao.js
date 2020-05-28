@@ -102,7 +102,7 @@ class UserDao {
             this.deleteProfileS3(key).then(() => {
 
                 db.findOneAndUpdate({ _id: new ObjectId(id) },
-                    { $set: { profilePic: null }})
+                    { $set: { profilePic: null } })
                     .then(user => {
                         user.value.profilePic = null;
                         resolver(user.value);
@@ -150,6 +150,24 @@ class UserDao {
 
     }
 
+    editOtherChamps(id, newUser) {
+        return new Promise(async (resolve, reject) => {
+            const db = mongo.db('myBlog').collection('user');
+            newUser.password = await bcrypt.hash(newUser.password, 10);
+            
+            db.findOneAndUpdate({ _id: new ObjectId(id) },
+                { $set: newUser })
+                .then(user => {
+                    if(newUser.name) user.value.name = newUser.name;
+                    if(newUser.lastName) user.value.lastName = newUser.lastName;
+                    if(newUser.birthDay) user.value.birthDay = newUser.birthDay;
+                    if(newUser.socialNetwork) user.value.socialNetwork = newUser.socialNetwork;
+
+                    resolve(user.value);
+                }).catch(err => reject(err));
+        })
+    }
+    
     editEmail(newEmail, id) {
         return new Promise((resolve, reject) => {
             const db = mongo.db('myBlog').collection('user');

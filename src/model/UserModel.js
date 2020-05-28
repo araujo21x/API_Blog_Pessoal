@@ -132,6 +132,28 @@ class UserModel {
 
     }
 
+    creatEditUser() {
+        return new Promise((resolve, reject) => {
+            let editUser = {};
+
+            if (!this._user.name && !this._user.lastName && !this._user.birthDay && !this._user.socialNetwork)
+                reject("campos não informados");
+
+            if (this._user.name) editUser.name = this._user.name;
+            if (this._user.lastName) editUser.lastName = this._user.lastName;
+            if (this._user.birthDay) editUser.birthDay = this._user.birthDay;
+            if (this._user.socialNetwork) editUser.socialNetwork = this._user.socialNetwork;
+            if (this._user.password) {
+                this.verificationPassword().then(message => {
+                    if (message > 0) reject(message);
+                    editUser.password = this._user.password;
+                }); 
+            };
+
+            resolve(editUser);
+        })
+
+    }
 }
 
 module.exports = UserModel;

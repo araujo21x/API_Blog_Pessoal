@@ -71,7 +71,15 @@ class UserController {
 
     edit() {
         return async (req, res) => {
+            const userModel = new UserModel(req.body);
+            const userDao = new UserDao()
 
+            try{
+                const editUser = await userModel.creatEditUser();
+                const newUser = await userDao.editOtherChamps(req.userId, editUser);
+                newUser.password = undefined;
+                res.status(200).json(newUser);
+            }catch(err){res.status(400).json(`error: ${err}`)};
         }
     }
 
@@ -174,8 +182,6 @@ class UserController {
             };
         }
     }
-
-
 
 }
 module.exports = UserController;
