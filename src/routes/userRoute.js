@@ -8,12 +8,17 @@ module.exports = app => {
     const routes = user.routes();
 
     app.route(routes.user)
-        .get(user.get());
+        .get(user.get())
+        .delete(user.delete())
+        .patch(user.edit());
+
+    app.patch(routes.email, user.editEmail());
+    app.patch(routes.nickName, user.editNickName());
 
     app.route(routes.profilePic)
         .post(multer(multerConfig).single(`file`), user.setProfilePic())
         .delete(user.deleteProfilePic())
-        // .patch(multer(multerConfig).single(`file`), user.tradeProfilePic());
+        .patch(multer(multerConfig).single(`file`), user.tradeProfilePic());
 
     
 }

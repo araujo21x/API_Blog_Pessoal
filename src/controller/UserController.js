@@ -11,7 +11,8 @@ class UserController {
             recoveryPass: `/recovery/password`,
             profilePic: `/user/profilePic`,
             user: `/user/user`,
-
+            email: `/user/email`,
+            nickName:`/user/nickName`
         }
     }
 
@@ -55,7 +56,16 @@ class UserController {
 
     get() {
         return async (req, res) => {
+            const userDao = new UserDao();
 
+            try {
+                const user = await userDao.getUser(req.userId);
+                console.log(user);
+                res.status(200).json(user);
+            } catch (err) {
+                console.log(err)
+                res.status(400).json({ err })
+            }
         }
     }
 
@@ -66,8 +76,52 @@ class UserController {
     }
 
     delete() {
-        return (req, res) => {
+        return async (req, res) => {
+            const userDao = new UserDao();
 
+            try {
+                const response = await userDao.deleteUser(req.userId);
+                res.status(200).json({ message: `user deletado`, response });
+            } catch (err) {
+                res.status(400).json({ err });
+            }
+        }
+    }
+
+    editEmail() {
+        return async (req, res) => {
+            const userModel = new UserModel(req.body);
+            const userDao = new UserDao();
+            
+            try{
+                const verifEmail = await userModel.verificationEmail();
+
+                if(verifEmail.length > 0) 
+                    res.status(400).json({message: `${verifEmail}`});
+
+                const newUser = await userDao.editEmail(req.body.email, req.userId)
+
+                res.status(200).json(newUser);
+
+            }catch(err){
+                res.status(400).json({err:err});
+            }
+
+        }
+    }
+
+    editNickName() {
+        return async (req, res) => {
+            const userDao = new UserDao();
+            
+            try{
+                const newUser = await userDao.editNickName(req.body.nickName, req.userId)
+
+                res.status(200).json(newUser);
+
+            }catch(err){
+                res.status(400).json({err:err});
+            }
         }
     }
 
@@ -90,17 +144,35 @@ class UserController {
     deleteProfilePic() {
         return async (req, res) => {
             const userDao = new UserDao();
-            
-            try{
-                const newUser = userDao.deleteProfilePic(req.userId, req.body.key);
-                res.status(200).json(newUser);
 
-            }catch(err) {res.status(400).json(err)};
+            try {
+                const user = await userDao.deleteProfilePic(req.userId, req.body.key);
+                res.status(200).json({ user: user });
+
+            } catch (err) { res.status(400).json(err) };
         }
     }
 
     tradeProfilePic() {
+        return async(req, res)=> {
+            let editUser = { _id: req.userId, profilePic: req.file };
 
+            const userModel = new UserModel(editUser);
+            const userDao = new UserDao();
+
+            try {
+                const deletePicS3 = await userDao.deleteProfileS3(req.body.key);
+
+                if(!deletePicS3) res.status(400).json({err: true});
+
+                const user = await userDao.setProfilePic(userModel.get());
+
+                res.status(200).json({ user: user });
+
+            } catch (err) {
+                res.status(400).json({ err })
+            };
+        }
     }
 
 

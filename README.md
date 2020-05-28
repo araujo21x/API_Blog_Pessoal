@@ -9,24 +9,56 @@ API para um projeto de Blog/portfólio pessoal, que funcione para demonstrar meu
     - método: POST;
     - request: Json com {name, lastName, email, nickName, password, birthday};
     - response: o erro ou {"message": "cadastrado com sucesso", o usuario e token}.
+
 ### Adicionar campo "authotization" na Header com a palavra Bearer e o token ex:<Bearer token>
-    * Login
-        - endereço: /login ;
-        - método: POST;
-        - request: Json com {email ou nickName e password};
-        - response: o erro ou {usuario, token}.
 
-    * Adicionar Foto de perfil
-        - endereço: /user/profilePic ;
-        - método: POST;
-        - request: {file: com o arquivo de foto até 2mb};
-        - response: o erro ou {usuario com os dados da foto}.
+* Login
+    - endereço: /login ;
+    - método: POST;
+    - request: Json com {email ou nickName e password};
+    - response: Erro ou {usuario, token}.
 
-    * Remover Foto de perfil
-        - endereço: /user/profilePic ;
-        - método: DELETE;
-        - request: json com {key: key da foto};
-        - response: o erro ou {usuario com os dados atualizados}.
+* Pegar dados do usuário
+    - endereço: /user/user ;
+    - método: GET;
+    - request: nada;
+    - response: Erro ou usuario.
+
+* Deletar usuário
+    - endereço: /user/user ;
+    - método: DELETE;
+    - request: nada;
+    - response: Erro ou mensagem de <usuario deletado>.
+
+* Trocar Email
+    - endereço: /user/email ;
+    - método: PATCH;
+    - request: json {email: "novo email"};
+    - response: Erro ou usuário.
+
+* Trocar NickName
+    - endereço: /user/nickName ;
+    - método: PATCH;
+    - request: json {nickName: "novo nickName"};
+    - response: Erro ou usuário.
+
+* Adicionar Foto de perfil
+    - endereço: /user/profilePic ;
+    - método: POST;
+    - request: {file: com o arquivo de foto até 2mb};
+    - response: Erro ou {usuario com os dados da foto}.
+
+* Remover Foto de perfil
+    - endereço: /user/profilePic ;
+    - método: DELETE;
+    - request: json com {key: key da foto};
+    - response: Erro ou {usuario com os dados atualizados}.
+
+* Trocar foto de perfil
+    - endereço: /user/profilePic ;
+    - método: PATCH;
+    - request: json com {file: com o arquivo de foto até 2mb e key: key da foto foto de perfil atual};
+    - response: Erro ou {usuario com os dados atualizados}.
 
 # Modulos
  * express 4.17.1;

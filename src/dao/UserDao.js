@@ -22,7 +22,7 @@ class UserDao {
                             }).catch(err => reject(err));
 
                     }).catch(err => reject(err));
-                })
+                }).catch(err => reject(err))
         })
     }
 
@@ -70,6 +70,63 @@ class UserDao {
 
     }
 
+    deleteUser(id) {
+        return new Promise((resolve, reject) => {
+            const db = mongo.db('myBlog').collection('user');
+
+            db.deleteOne({ _id: new ObjectId(id) })
+                .then(() => { resolve() })
+                .catch((err) => { reject(err) })
+        })
+    }
+
+    setProfilePic(user) {
+        return new Promise((resolve, reject) => {
+            const db = mongo.db('myBlog').collection('user');
+
+            db.findOneAndUpdate({ _id: new ObjectId(user._id) },
+                { $set: { profilePic: user.profilePic } })
+                .then(userNew => {
+                    userNew.value.profilePic = user.profilePic;
+                    console.log(userNew.value);
+                    resolve(userNew.value)
+                })
+                .catch(err => reject(err))
+        })
+    }
+
+    deleteProfilePic(id, key) {
+        return new Promise((resolver, reject) => {
+            const db = mongo.db('myBlog').collection('user');
+
+            this.deleteProfileS3(key).then(() => {
+
+                db.findOneAndUpdate({ _id: new ObjectId(id) },
+                    { $set: { profilePic: null }})
+                    .then(user => {
+                        user.value.profilePic = null;
+                        resolver(user.value);
+                    }).catch(err => reject(err));
+
+            }).catch(err => reject({ err }));
+
+        });
+    }
+
+    deleteProfileS3(key) {
+        return new Promise((resolver, reject) => {
+            const s3 = new aws.S3();
+
+            s3.deleteObject({
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: key
+            }).promise()
+                .then(() => resolver(true))
+                .catch(err => reject(err));
+
+        });
+    }
+
     verificEmail_Nick(db, user) {
         return new Promise((resolve, reject) => {
 
@@ -93,50 +150,57 @@ class UserDao {
 
     }
 
-    verificEmail() {
-
-    }
-
-    verificNick() {
-
-    }
-
-    setProfilePic(user) {
+    editEmail(newEmail, id) {
         return new Promise((resolve, reject) => {
             const db = mongo.db('myBlog').collection('user');
 
-            db.findOneAndUpdate({ _id: new ObjectId(user._id) },
-                { $set: { profilePic: user.profilePic } })
-                .then(() => {
-                    this.getUser(user._id)
-                        .then(user => resolve(user))
-                        .catch(err => reject(err));
+            this.verificEmail(newEmail, db).then(() => {
+                db.update({ _id: ObjectId(id) },
+                    { $set: { email: newEmail } })
+                    .then(() => resolve({ email: newEmail, message: `email trocado` }))
+                    .catch(err => reject(err));
+            })
+                .catch(err => reject(err));
+        })
+    }
+
+    editNickName(newNickName, id) {
+        return new Promise((resolve, reject) => {
+            const db = mongo.db('myBlog').collection('user');
+
+            this.verificNick(newNickName, db).then(() => {
+                db.update({ _id: ObjectId(id) },
+                    { $set: { nickName: newNickName } })
+                    .then(() => resolve({ nickName: newNickName, message: `NickName trocado` }))
+                    .catch(err => reject(err));
+            })
+                .catch(err => reject(err));
+        })
+    }
+
+    verificEmail(newEmail, db) {
+        return new Promise((resolve, reject) => {
+
+            db.findOne({ email: newEmail })
+                .then(value => {
+                    if (value) reject(`*Email já cadastrado`);
+                    else resolve();
                 })
                 .catch(err => reject(err))
         })
     }
 
-    deleteProfilePic(id, key) {
-        return new Promise((resolver, reject) => {
-            const db = mongo.db('myBlog').collection('user');
-            if (process.env.STORAGE_TYPE === 's3') {
-                const s3 = new aws.S3();
+    verificNick(newNickName, db) {
+        return new Promise((resolve, reject) => {
 
-                s3.deleteObject({
-                    Bucket: process.env.AWS_BUCKET_NAME,
-                    Key: key
-                }).promise()
-                    .then(() => {
-                        db.findOneAndUpdate({ _id: new ObjectId(id) },
-                            { $set: { profilePic: null } })
-                            .then(user => {
-                                resolver(user.value);
-                            }).catch(err => reject(err));
-                    }).catch(err => reject({ err }));
-            }
-        });
+            db.findOne({ nickName: newNickName })
+                .then(value => {
+                    if (value) reject(`*NickName já cadastrado`);
+                    else resolve();
+                })
+                .catch(err => reject(err))
+        })
     }
-
 }
 
 module.exports = UserDao;
