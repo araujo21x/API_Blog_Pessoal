@@ -19,6 +19,5 @@ module.exports = app => {
         .post(multer(multerConfig).single(`file`), user.setProfilePic())
         .delete(user.deleteProfilePic())
         .patch(multer(multerConfig).single(`file`), user.tradeProfilePic());
-
     
 }
