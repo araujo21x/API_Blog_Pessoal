@@ -4,12 +4,12 @@ class PostModel {
             _id: post._id,
             title: post.title,
             imgTitle: !post.imgTitle ? null : {
-                name: post.imgTitle.originalname,
+                name: !post.imgTitle.originalname ? post.imgTitle.name: post.imgTitle.originalname,
                 size: post.imgTitle.size,
                 key: post.imgTitle.key,
-                url: post.imgTitle.location,
+                url: post.imgTitle.location ,
             },
-            author: {
+            author: !post.author ? null: {
                 _idAuthor: idAuthor,
                 name: post.author.name,
                 lastName: post.author.lastName,
@@ -17,7 +17,6 @@ class PostModel {
                 urlProfilePic: post.author.urlProfilePic
             },
             content: post.content,
-            imgContent: !post.imgContent? null: [],
             dateCreation: post.dateCreation,
             dateUpDate: post.dateUpDate,
         }

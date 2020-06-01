@@ -7,7 +7,7 @@ class PostController {
             post: "/post/post",
             getAll: "/post/getAll",
             getAllIdUser: "/post/getAllIdUser",
-            img: "/post/img"
+            imgTitle: "/post/imgTitle"
         };
     }
 
@@ -18,10 +18,10 @@ class PostController {
             const postModel = new PostModel(req.body, req.userId);
             const postDao = new PostDao();
 
-            try{
+            try {
                 const post = await postDao.creat(postModel.get());
                 res.status(200).json(post);
-            }catch(err){
+            } catch (err) {
                 res.status(400).json(err);
             }
         }
@@ -31,21 +31,21 @@ class PostController {
         return async (req, res) => {
             const postDao = new PostDao();
 
-            try{
+            try {
                 const post = await postDao.getId(req.body.id);
                 res.status(200).json(post);
-            }catch(err){res.status(400).json(err);}
+            } catch (err) { res.status(400).json(err); }
         }
     }
 
     getAll() {
         return async (req, res) => {
             const postDao = new PostDao();
-            
-            try{
+
+            try {
                 const posts = await postDao.getAll();
                 res.status(200).json(posts);
-            }catch(err) {res.status(400).json(err)};
+            } catch (err) { res.status(400).json(err) };
         }
     }
 
@@ -53,10 +53,10 @@ class PostController {
         return async (req, res) => {
             const postDao = new PostDao();
 
-            try{
+            try {
                 const posts = await postDao.getAllUser(req.body.id)
                 res.status(200).json(posts);
-            }catch(err){ res.status(400).json(err);};
+            } catch (err) { res.status(400).json(err); };
         }
     }
 
@@ -72,22 +72,35 @@ class PostController {
         }
     }
 
-    insertImg(){
-        return async (req,res)=> {
+    insertImgTitle() {
+        return async (req, res) => {
+            const postModel = new PostModel({ _id: req.body._id, imgTitle: req.file }, req.userId);
+            const postDao = new PostDao();
+            try {
+                const response = await postDao.uploadImgTitle(postModel.get());
+                res.status(200).json(response);
 
-            try{
-
-            }catch(err){ res.status(400).json(err)};
+            } catch (err) { res.status(400).json(err) }
         }
     }
 
-    deleteImg(){
-        return async(req, res)=>{
-            try{
+    insertImg() {
+        return async (req, res) => {
 
-            }catch(err){ res.status(400).json(err)};
         }
     }
+
+    deleteImgTitle() {
+        return async (req, res) => {
+            const postDao = new PostDao();
+           
+            try {
+                const resp = await postDao.deletImg({_id: req.body._id, imgTitle: req.body.imgTitle });
+                res.status(200).json(resp);
+            } catch (err) { res.status(400).json(err) };
+        }
+    }
+
 }
 
 module.exports = PostController;
