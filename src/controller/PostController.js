@@ -1,5 +1,6 @@
 const PostModel = require('../model/PostModel');
 const PostDao = require('../dao/PostDao');
+const ImgBodyModel = require('../model/ImgBodyModel');
 
 class PostController {
     routes() {
@@ -7,11 +8,10 @@ class PostController {
             post: "/post/post",
             getAll: "/post/getAll",
             getAllIdUser: "/post/getAllIdUser",
-            imgTitle: "/post/imgTitle"
+            imgTitle: "/post/imgTitle",
+            imgBody: "/post/imgBody",
         };
     }
-
-    // criar funções pra adicionar imagens e remover e funções pra cadastrar as postagem e modificar como se fosse difierente kkkkkkkkkkkkkkkkkk
 
     creat() {
         return async (req, res) => {
@@ -62,13 +62,25 @@ class PostController {
 
     edit() {
         return async (req, res) => {
+            const postModel = new PostModel(req.body);
+            const postDao = new PostDao();
 
+            try{
+                const newPost = await postDao.edirPost(postModel.editPost());
+                res.status(200).json(newPost);
+            }catch(err){res.status(400).json(err)};
         }
     }
 
     delete() {
         return async (req, res) => {
+            const postDao = new PostDao();
 
+            try{
+                const response = await postDao.deletePost(req.body.id);
+                res.status(200).json(response);
+
+            }catch(err){res.status(400).json(err)};
         }
     }
 
@@ -84,20 +96,43 @@ class PostController {
         }
     }
 
-    insertImg() {
+    deleteImgTitle() {
         return async (req, res) => {
+            const postDao = new PostDao();
+
+            try {
+                const resp = await postDao.deletImgTitle({ _id: req.body._id, imgTitle: req.body.imgTitle });
+                res.status(200).json(resp);
+            } catch (err) { res.status(400).json(err) };
+        }
+    }
+
+    insertImgBody() {
+        return async (req, res) => {
+            const imgBodyModel = new ImgBodyModel(req.file).get();
+            const postDao = new PostDao();
+
+            try {
+                const response = await postDao.uploadImgBody(imgBodyModel, req.body.id);
+                res.status(200).json(response);
+            } catch (err) {
+                res.status(400).json(err)
+            }
 
         }
     }
 
-    deleteImgTitle() {
+    deleteImgBody() {
         return async (req, res) => {
             const postDao = new PostDao();
-           
+
             try {
-                const resp = await postDao.deletImg({_id: req.body._id, imgTitle: req.body.imgTitle });
-                res.status(200).json(resp);
-            } catch (err) { res.status(400).json(err) };
+                const response = await postDao.deletImgBody(req.body.key, req.body.id);
+                console.log(response)
+                res.status(200).json(response)
+            } catch (err) {
+                res.status(400).json(err)
+            }
         }
     }
 
