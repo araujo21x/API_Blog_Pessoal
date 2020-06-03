@@ -10,14 +10,14 @@ API para um projeto de Blog/portfólio pessoal, que funcione para demonstrar meu
     - request: Json com {name, lastName, email, nickName, password, birthday};
     - response: o erro ou {"message": "cadastrado com sucesso", o usuario e token}.
 
-### Adicionar campo "authotization" na Header com a palavra Bearer e o token ex:<Bearer token>
-
 * Login
     - endereço: /login ;
     - método: POST;
     - request: Json com {email ou nickName e password};
     - response: Erro ou {usuario, token}.
+### Adicionar campo "authotization" na Header com a palavra Bearer e o token ex:<Bearer token>
 
+### Rotas para trabalhar com Usuário:
 * Pegar dados do usuário
     - endereço: /user/user ;
     - método: GET;
@@ -57,8 +57,26 @@ API para um projeto de Blog/portfólio pessoal, que funcione para demonstrar meu
 * Trocar foto de perfil
     - endereço: /user/profilePic ;
     - método: PATCH;
-    - request: json com {file: com o arquivo de foto até 2mb e key: key da foto foto de perfil atual};
+    - request: {file: com o arquivo de foto até 2mb e key: key da foto foto de perfil atual};
     - response: Erro ou {usuario com os dados atualizados}.
+
+### Rotas para trabalhar com Post:
+
+* Criar Post
+    - endereço: /post/post;
+    - método: POST;
+    - request: json com {title, author:{_idAuthor, name, lastName, nickName urlProfilePic}, content};
+    - response: Erro ou post.
+
+* Pegar post por ID
+    - endereço: /post/post;
+    - método: GET;
+    - request: json com {id};
+    - response: Erro ou post.
+
+
+
+### Rotas para trabalhar com Comentario:
 
 # Modulos
  * express 4.17.1;
