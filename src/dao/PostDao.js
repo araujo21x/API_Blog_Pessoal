@@ -205,7 +205,7 @@ class PostDao {
     edirPost(post) {
         return new Promise((resolve, reject) => {
             const db = mongo.db('myBlog').collection('post');
-
+            
             db.findOneAndUpdate({ _id: new ObjectId(post.id) }
                 , { $set: post.newPost })
                 .then(value => { 
