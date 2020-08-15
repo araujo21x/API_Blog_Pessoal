@@ -14,7 +14,7 @@ module.exports = app =>{
         .patch(postController.edit());
 
     app.route(routes.imgTitle)
-        .post(multer(multerConfig).single('file'), postController.insertImgTitle())
+        .post( multer(multerConfig).single('file'), postController.insertImgTitle())
         .delete(postController.deleteImgTitle());
 
     app.route(routes.imgBody)
